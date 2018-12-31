@@ -31,7 +31,7 @@ app.post('/webhook', (req, resp) => {
 });
 
 app.get('/webhook', (req, resp) => {
-  let VERIFICATION_TOKEN = "thwerwehkjhsdfkhsdfkjsd"
+  let VERIFICATION_TOKEN = "YrvzX5ID1RJiphbBDsYkfpSHIBySw3IR"
 
   let mode = req.query['hub.mode'];
   let token = req.query['hub.verification_token'];

@@ -88,17 +88,12 @@ function handleMessage(sender_psid, received_message) {
       attachment: {
         type: "template",
         payload: {
-          template_type: "generic",
-          elements: [
-            {
-              title: "which city do you want info?",
-              subtitle: "Tap a button to answer.",
-              buttons: [
-                { type: "postback", title: "Toronto", payload: "ca-tor" },
-                { type: "postback", title: "Vancouver", payload: "ca-van" },
-                { type: "postback", title: "Ottawa", payload: "ca-ott" }
-              ]
-            }
+          template_type: "button",
+          text: "which city do you want info?",
+          buttons: [
+            { type: "postback", title: "Toronto", payload: "ca-tor" },
+            { type: "postback", title: "Vancouver", payload: "ca-van" },
+            { type: "postback", title: "Ottawa", payload: "ca-ott" }
           ]
         }
       }

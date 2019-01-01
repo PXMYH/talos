@@ -30,7 +30,8 @@ app.post("/webhook", (req, resp) => {
       if (webhook_event.message) {
         handleMessage(sender_psid, webhook_event.message);
       } else if (webhook_event.postback) {
-        handlePostback(sender_psid, webhook_event.postback);
+        // handlePostback(sender_psid, webhook_event.postback);
+        handleLocationPostback(sender_psid, webhook_event.postback);
       }
     });
 
@@ -71,12 +72,36 @@ function handleMessage(sender_psid, received_message) {
   let response;
 
   // check if the message contains text
+  // if (received_message.text) {
+  //   // Create the payload for a basic text message
+  //   response = {
+  //     text: `You sent the message: "${
+  //       received_message.text
+  //     }". Now send me an image!`
+  //   };
+  // } else
   if (received_message.text) {
-    // Create the payload for a basic text message
+    console.log(
+      "received message: " + received_message.text + " constructing response.."
+    );
     response = {
-      text: `You sent the message: "${
-        received_message.text
-      }". Now send me an image!`
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [
+            {
+              title: "which city do you want info?",
+              subtitle: "Tap a button to answer.",
+              buttons: [
+                { type: "postback", title: "Toronto", payload: "ca-tor" },
+                { type: "postback", title: "Vancouver", payload: "ca-van" },
+                { type: "postback", title: "Ottawa", payload: "ca-ott" }
+              ]
+            }
+          ]
+        }
+      }
     };
   } else if (received_message.attachments) {
     // Gets the URL of the message attachment
@@ -113,6 +138,7 @@ function handleMessage(sender_psid, received_message) {
 
   // Sends the response message
   callSendAPI(sender_psid, response);
+  console.log("[handleMessage] sending response ... ");
 }
 
 // Handles messaging_postbacks events
@@ -127,6 +153,30 @@ function handlePostback(sender_psid, received_postback) {
     response = { text: "Thanks!" };
   } else if (payload === "no") {
     response = { text: "Oops, try sending another image." };
+  }
+  // Send the message to acknowledge the postback
+  callSendAPI(sender_psid, response);
+}
+
+// Handles messaging_postbacks events specifically for location services
+function handleLocationPostback(sender_psid, received_postback) {
+  let response;
+
+  // Get the payload for the postback
+  let payload = received_postback.payload;
+
+  // Set the response based on the postback payload
+  if (payload === "ca-tor") {
+    response = {
+      text:
+        "Toronto has the highest rent across Canada. Please waiting while our team gathering more detailed information."
+    };
+  } else if (payload === "ca-van") {
+    response = {
+      text: "Vancouver is a beautiful city to live in, but, expensive."
+    };
+  } else if (payload === "ca-ott") {
+    response = { text: "Ottawa's housing condition is improving." };
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
@@ -152,7 +202,7 @@ function callSendAPI(sender_psid, response) {
     },
     (err, res, body) => {
       if (!err) {
-        console.log("message sent!");
+        console.log("message sent!" + response);
       } else {
         console.error("Unable to send message:" + err);
       }

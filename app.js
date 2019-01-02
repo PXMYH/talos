@@ -172,6 +172,10 @@ function handleLocationPostback(sender_psid, received_postback) {
     };
   } else if (payload === "ca-ott") {
     response = { text: "Ottawa's housing condition is improving." };
+  } else if (payload === "yes") {
+    response = { text: "Thanks!" };
+  } else if (payload === "no") {
+    response = { text: "Oops, try sending another image." };
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
